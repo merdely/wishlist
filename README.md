@@ -30,4 +30,5 @@ If you have any questions, comments, feature requests, or patches, feel free to 
 phpgiftreg is licensed by the GPL.  For more information on the GPL, visit http://www.gnu.org
 
 Copyright 2024 Michael Erdely <mike@erdelynet.com>
+
 Copyright 2022 Ryan Walberg <generalpf@gmail.com> [@GeneralPeeEff](https://twitter.com/GeneralPeeEff)
