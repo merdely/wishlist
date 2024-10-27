@@ -78,7 +78,7 @@ function getGlobalOptions() {
 		"email_xmailer" => "PHP/" . phpversion(),
 
 		/* Application name. */
-		"app_name" => "Gift Wishlist",
+		"app_name" => "[DEV] Gift Wishlist",
 
 		/* Whether or not to show brief blurbs in certain spots which describe how 
 			features work.
