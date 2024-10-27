@@ -21,7 +21,7 @@ Its features include:
 
 ## Installing
 
-Read [INSTALL](INSTALL) for installation instructions.
+Read [INSTALL](src/INSTALL) for installation instructions.
 
 If you have any questions, comments, feature requests, or patches, feel free to e-mail me.
 
