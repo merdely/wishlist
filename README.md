@@ -3,6 +3,10 @@
 The PHP Gift Wishlist is a web-enabled gift registry intended for use among
 a circle of family members or friends.
 
+This project is based on [phpgiftreg](https://github.com/generalpf/phpgiftreg).
+I have forked Ryan's repository and made many changes. Thank you, Ryan, for all
+of your hard work!
+
 It is intended to fill the following purposes:
 
 * Permit the long-term storage of a list of items one desires, along with its price, where it can be bought, and (optionally) a URL where it can be
