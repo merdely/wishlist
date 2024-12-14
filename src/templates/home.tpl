@@ -433,43 +433,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 						</div> <!-- card body -->
 					</div> <!-- card -->
 				</div> <!-- col -->
-				<div class="col mb-3">
-					<div class="card h-100">
-						<div class="card-header">Available People To Shopping For</div>
-						<div class="card-body">
-							<div class="table-responsive">
-								<table class="table table-bordered table-striped">
-									<thead>
-									<tr>
-										<th class="colheader">Name</th>
-										<th>&nbsp;</th>
-									</tr>
-									</thead>
-									<tbody>
-										{foreach from=$prospects item=row}
-											<tr>
-												<td>{$row.fullname|escape:'htmlall'}</td>
-												<td align="right" nowrap>
-													{if $row.pending}
-														<a href="index.php?action=cancel&shopfor={$row.userid}"><img class="theme-image" data-light-src="images/delete-light.png" data-dark-src="images/delete-dark.png" src="images/delete-light.png" border="0" alt="Cancel" title="Cancel" /></a>
-													{else}
-														<a href="index.php?action=request&shopfor={$row.userid}">
-															{if $opt.shop_requires_approval}
-																<img class="theme-image" data-light-src="images/cloud-add-light.png" data-dark-src="images/cloud-add-dark.png" src="images/cloud-add-light.png" border="0" alt="Request" title="Request" />
-															{else}
-																<img class="theme-image" data-light-src="images/cloud-add-light.png" data-dark-src="images/cloud-add-dark.png" src="images/cloud-add-light.png" border="0" alt="Add" title="Add" />
-															{/if}
-														</a>
-													{/if}
-												</td>
-											</tr>
-										{/foreach}
-									</tbody>
-								</table>
-							</div> <!-- table-responsive -->
-						</div> <!-- card body -->
-					</div> <!-- card -->
-				</div> <!-- col -->
+				{if !$opt.auto_connect_family_members}
+					<div class="col mb-3">
+						<div class="card h-100">
+							<div class="card-header">Available People To Shopping For</div>
+							<div class="card-body">
+								<div class="table-responsive">
+									<table class="table table-bordered table-striped">
+										<thead>
+										<tr>
+											<th class="colheader">Name</th>
+											<th>&nbsp;</th>
+										</tr>
+										</thead>
+										<tbody>
+											{foreach from=$prospects item=row}
+												<tr>
+													<td>{$row.fullname|escape:'htmlall'}</td>
+													<td align="right" nowrap>
+														{if $row.pending}
+															<a href="index.php?action=cancel&shopfor={$row.userid}"><img class="theme-image" data-light-src="images/delete-light.png" data-dark-src="images/delete-dark.png" src="images/delete-light.png" border="0" alt="Cancel" title="Cancel" /></a>
+														{else}
+															<a href="index.php?action=request&shopfor={$row.userid}">
+																{if $opt.shop_requires_approval}
+																	<img class="theme-image" data-light-src="images/cloud-add-light.png" data-dark-src="images/cloud-add-dark.png" src="images/cloud-add-light.png" border="0" alt="Request" title="Request" />
+																{else}
+																	<img class="theme-image" data-light-src="images/cloud-add-light.png" data-dark-src="images/cloud-add-dark.png" src="images/cloud-add-light.png" border="0" alt="Add" title="Add" />
+																{/if}
+															</a>
+														{/if}
+													</td>
+												</tr>
+											{/foreach}
+										</tbody>
+									</table>
+								</div> <!-- table-responsive -->
+							</div> <!-- card body -->
+						</div> <!-- card -->
+					</div> <!-- col -->
+				{/if}
 				<div class="col mb-3">
 					<div class="card h-100">
 						<div class="card-header">Messages</div>

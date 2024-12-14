@@ -223,49 +223,81 @@ while ($row = $stmt->fetch()) {
 	$ranks[] = $row;
 }
 
-$stmt = $smarty->dbh()->prepare("SELECT u.userid, u.fullname, u.comment, u.list_stamp, ISNULL(sub.subscriber) AS is_unsubscribed, COUNT(i.itemid) AS itemcount " .
-			"FROM {$opt["table_prefix"]}shoppers s " .
-			"INNER JOIN {$opt["table_prefix"]}users u ON u.userid = s.mayshopfor " .
-			"LEFT OUTER JOIN {$opt["table_prefix"]}items i ON u.userid = i.userid " .
-			"LEFT OUTER JOIN {$opt["table_prefix"]}subscriptions sub ON sub.publisher = u.userid AND sub.subscriber = ? " .
-			"WHERE s.shopper = ? " .
-				"AND pending = 0 " .
-			"GROUP BY u.userid, u.fullname, u.list_stamp " .
-			"ORDER BY u.fullname");
-$stmt->bindParam(1, $userid, PDO::PARAM_INT);
-$stmt->bindParam(2, $userid, PDO::PARAM_INT);
-$stmt->execute();
-$shoppees = array();
-while ($row = $stmt->fetch()) {
-	if ($row['list_stamp'] == 0) {
-		$row['list_stamp'] = '-';
+if (!$opt["auto_connect_family_members"]) {
+	# When family members are not automatic shoppers
+	$stmt = $smarty->dbh()->prepare("SELECT u.userid, u.fullname, u.comment, u.list_stamp, ISNULL(sub.subscriber) AS is_unsubscribed, COUNT(i.itemid) AS itemcount " .
+				"FROM {$opt["table_prefix"]}shoppers s " .
+				"INNER JOIN {$opt["table_prefix"]}users u ON u.userid = s.mayshopfor " .
+				"LEFT OUTER JOIN {$opt["table_prefix"]}items i ON u.userid = i.userid " .
+				"LEFT OUTER JOIN {$opt["table_prefix"]}subscriptions sub ON sub.publisher = u.userid AND sub.subscriber = ? " .
+				"WHERE s.shopper = ? " .
+					"AND pending = 0 " .
+				"GROUP BY u.userid, u.fullname, u.list_stamp " .
+				"ORDER BY u.fullname");
+	$stmt->bindParam(1, $userid, PDO::PARAM_INT);
+	$stmt->bindParam(2, $userid, PDO::PARAM_INT);
+	$stmt->execute();
+	$shoppees = array();
+	while ($row = $stmt->fetch()) {
+		if ($row['list_stamp'] == 0) {
+			$row['list_stamp'] = '-';
+		}
+		else {
+			$listStampDate = new DateTime($row['list_stamp']);
+			$row['list_stamp'] = $listStampDate->format($opt["date_format"]);
+		}
+		$shoppees[] = $row;
 	}
-	else {
-		$listStampDate = new DateTime($row['list_stamp']);
-		$row['list_stamp'] = $listStampDate->format($opt["date_format"]);
-	}
-	$shoppees[] = $row;
-}
 
-$stmt = $smarty->dbh()->prepare("SELECT DISTINCT u.userid, u.fullname, s.pending " .
-			"FROM {$opt["table_prefix"]}memberships mymem " .
-			"INNER JOIN {$opt["table_prefix"]}memberships others " .
-				"ON others.familyid = mymem.familyid AND others.userid <> ? " .
-			"INNER JOIN {$opt["table_prefix"]}users u " .
-				"ON u.userid = others.userid " .
-			"LEFT OUTER JOIN {$opt["table_prefix"]}shoppers s " .
-				"ON s.mayshopfor = others.userid AND s.shopper = ? " .
-			"WHERE mymem.userid = ? " .
-				"AND (s.pending IS NULL OR s.pending = 1) " .
-				"AND u.approved = 1 " .
-			"ORDER BY u.fullname");
-$stmt->bindParam(1, $userid, PDO::PARAM_INT);
-$stmt->bindParam(2, $userid, PDO::PARAM_INT);
-$stmt->bindParam(3, $userid, PDO::PARAM_INT);
-$stmt->execute();
-$prospects = array();
-while ($row = $stmt->fetch()) {
-	$prospects[] = $row;
+	$stmt = $smarty->dbh()->prepare("SELECT DISTINCT u.userid, u.fullname, s.pending " .
+				"FROM {$opt["table_prefix"]}memberships mymem " .
+				"INNER JOIN {$opt["table_prefix"]}memberships others " .
+					"ON others.familyid = mymem.familyid AND others.userid <> ? " .
+				"INNER JOIN {$opt["table_prefix"]}users u " .
+					"ON u.userid = others.userid " .
+				"LEFT OUTER JOIN {$opt["table_prefix"]}shoppers s " .
+					"ON s.mayshopfor = others.userid AND s.shopper = ? " .
+				"WHERE mymem.userid = ? " .
+					"AND (s.pending IS NULL OR s.pending = 1) " .
+					"AND u.approved = 1 " .
+				"ORDER BY u.fullname");
+	$stmt->bindParam(1, $userid, PDO::PARAM_INT);
+	$stmt->bindParam(2, $userid, PDO::PARAM_INT);
+	$stmt->bindParam(3, $userid, PDO::PARAM_INT);
+	$stmt->execute();
+	$prospects = array();
+	while ($row = $stmt->fetch()) {
+		$prospects[] = $row;
+	}
+} else {
+	# When family members are automatically connected as shoppers
+	$stmt = $smarty->dbh()->prepare("SELECT u.userid, u.fullname, u.comment, u.list_stamp, ISNULL(sub.subscriber) AS is_unsubscribed, COUNT(i.itemid) AS itemcount " .
+				"FROM {$opt["table_prefix"]}users u " .
+				"JOIN {$opt["table_prefix"]}memberships m ON u.userid = m.userid " .
+				"LEFT JOIN {$opt["table_prefix"]}items i ON u.userid = i.userid " .
+				"LEFT JOIN {$opt["table_prefix"]}subscriptions sub ON sub.publisher = u.userid AND sub.subscriber = ? " .
+				"WHERE m.familyid IN ( " .
+					"SELECT familyid " .
+					"FROM {$opt["table_prefix"]}memberships " .
+					"WHERE userid = ? " .
+				") " .
+				"AND u.userid != ? " .
+				"GROUP BY u.userid, u.fullname");
+	$stmt->bindParam(1, $userid, PDO::PARAM_INT);
+	$stmt->bindParam(2, $userid, PDO::PARAM_INT);
+	$stmt->bindParam(3, $userid, PDO::PARAM_INT);
+	$stmt->execute();
+	$shoppees = array();
+	while ($row = $stmt->fetch()) {
+		if ($row['list_stamp'] == 0) {
+			$row['list_stamp'] = '-';
+		}
+		else {
+			$listStampDate = new DateTime($row['list_stamp']);
+			$row['list_stamp'] = $listStampDate->format($opt["date_format"]);
+		}
+		$shoppees[] = $row;
+	}
 }
 
 $stmt = $smarty->dbh()->prepare("SELECT messageid, u.fullname, message, created " .

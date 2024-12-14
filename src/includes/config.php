@@ -62,6 +62,12 @@ function getGlobalOptions() {
 		*/
 		"newuser_default_family" => 1,
 
+		/* Automatically make family members shoppers for each other
+			0 = manual connections
+			1 = auto connect family members
+		*/
+		"auto_connect_family_members" => 1,
+
 		/* Whether or not whom an item is reserved/bought by is hidden. */
 		"anonymous_purchasing" => 0,
 
