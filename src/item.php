@@ -36,6 +36,7 @@ $url = "";
 $category = 1;
 $ranking = 3;
 $comment = "";
+$public = 0;
 $quantity = 1;
 $image_url = "";
 $image_filename = "";
@@ -78,6 +79,7 @@ if (!empty($_REQUEST["action"])) {
 		$category = isset($_REQUEST["category"]) ? trim($_REQUEST["category"]) : "1";
 		$ranking = isset($_REQUEST["ranking"]) ? $_REQUEST["ranking"] : "3";
 		$comment = isset($_REQUEST["comment"]) ? $_REQUEST["comment"] : "";
+		$public = isset($_REQUEST["public"]) ? $_REQUEST["public"] : 0;
 		if (isset($_REQUEST["pricesymbol"]) && $_REQUEST["pricesymbol"] != $opt["currency_symbol"]) {
 			$price = "";
 			$comment = trim("$comment Price not in {$opt['currency_symbol']}, it is {$_REQUEST["pricesymbol"]}{$_REQUEST['price']}.");
@@ -241,7 +243,7 @@ if (!empty($_REQUEST["action"])) {
 		}
 	}
 	else if ($action == "edit") {
-		$stmt = $smarty->dbh()->prepare("SELECT name, description, price, source, category, url, ranking, comment, quantity, image_filename FROM {$opt["table_prefix"]}items WHERE itemid = ?");
+		$stmt = $smarty->dbh()->prepare("SELECT name, description, price, source, category, url, ranking, comment, public, quantity, image_filename FROM {$opt["table_prefix"]}items WHERE itemid = ?");
 		$stmt->bindValue(1, (int) $_REQUEST["itemid"], PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -254,6 +256,7 @@ if (!empty($_REQUEST["action"])) {
 			$category = $row["category"];
 			$ranking = $row["ranking"];
 			$comment = $row["comment"];
+			$public = $row["public"];
 			$quantity = (int) $row["quantity"];
 			$image_filename = $row["image_filename"];
 		}
@@ -267,13 +270,14 @@ if (!empty($_REQUEST["action"])) {
 		$category = 1;
 		$ranking = 3;
 		$comment = "";
+		$public = 0;
 		$quantity = 1;
 		$image_filename = "";
 	}
 	else if ($action == "insert") {
 		if (!$haserror) {
-			$stmt = $smarty->dbh()->prepare("INSERT INTO {$opt["table_prefix"]}items(userid,name,description,price,source,category,url,ranking,comment,quantity,image_filename) " .
-				"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			$stmt = $smarty->dbh()->prepare("INSERT INTO {$opt["table_prefix"]}items(userid,name,description,price,source,category,url,ranking,comment,public,quantity,image_filename) " .
+				"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			$stmt->bindParam(1, $userid, PDO::PARAM_INT);
 			$stmt->bindParam(2, $name, PDO::PARAM_STR);
 			$stmt->bindParam(3, $description, PDO::PARAM_STR);
@@ -283,11 +287,12 @@ if (!empty($_REQUEST["action"])) {
 			$stmt->bindParam(7, $url, PDO::PARAM_STR);
 			$stmt->bindParam(8, $ranking, PDO::PARAM_INT);
 			$stmt->bindParam(9, $comment, PDO::PARAM_STR);
-			$stmt->bindParam(10, $quantity, PDO::PARAM_INT);
+			$stmt->bindParam(10, $public, PDO::PARAM_BOOL);
+			$stmt->bindParam(11, $quantity, PDO::PARAM_INT);
 			if (!isset($image_base_filename) || $image_base_filename == "") {
 				$image_base_filename = NULL;
 			}
-			$stmt->bindParam(11, $image_base_filename, PDO::PARAM_STR);
+			$stmt->bindParam(12, $image_base_filename, PDO::PARAM_STR);
 			$stmt->execute();
 
 			stampUser($userid, $smarty->dbh(), $smarty->opt());
@@ -309,6 +314,7 @@ if (!empty($_REQUEST["action"])) {
 					"url = ?, " .
 					"ranking = ?, " .
 					"comment = ?, " .
+					"public = ?, " .
 					"quantity = ? " .
 					($image_base_filename != "" ? ", image_filename = ? " : "") .
 					"WHERE itemid = ?");
@@ -320,13 +326,15 @@ if (!empty($_REQUEST["action"])) {
 			$stmt->bindParam(6, $url, PDO::PARAM_STR);
 			$stmt->bindParam(7, $ranking, PDO::PARAM_INT);
 			$stmt->bindParam(8, $comment, PDO::PARAM_STR);
-			$stmt->bindParam(9, $quantity, PDO::PARAM_INT);
+			$stmt->bindParam(9, $public, PDO::PARAM_BOOL);
+			$stmt->bindParam(10, $quantity, PDO::PARAM_INT);
+            error_log("public = $public");
 			if ($image_base_filename != "") {
-				$stmt->bindParam(10, $image_base_filename, PDO::PARAM_STR);
-				$stmt->bindValue(11, (int) $_REQUEST["itemid"], PDO::PARAM_INT);
+				$stmt->bindParam(11, $image_base_filename, PDO::PARAM_STR);
+				$stmt->bindValue(12, (int) $_REQUEST["itemid"], PDO::PARAM_INT);
 			}
 			else {
-				$stmt->bindValue(10, (int) $_REQUEST["itemid"], PDO::PARAM_INT);
+				$stmt->bindValue(11, (int) $_REQUEST["itemid"], PDO::PARAM_INT);
 			}
 			$stmt->execute();
 
@@ -400,6 +408,7 @@ if (isset($url_error)) {
 }
 $smarty->assign('image_filename', $image_filename);
 $smarty->assign('comment', $comment);
+$smarty->assign('public', $public);
 $smarty->assign('categories', $categories);
 $smarty->assign('ranks', $ranks);
 header("Location: " . getFullPath("index.php"));

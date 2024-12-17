@@ -190,7 +190,7 @@ else {
 			$sortby = "rankorder {$_SESSION['sortdir']}, i.name";
 	}
 }
-$stmt = $smarty->dbh()->prepare("SELECT itemid, name, description, i.category as catid, c.category, price, price as pricenum, source, url, i.ranking as rankid, rendered, comment, quantity, image_filename FROM {$opt["table_prefix"]}items i LEFT OUTER JOIN {$opt["table_prefix"]}categories c ON c.categoryid = i.category LEFT OUTER JOIN {$opt["table_prefix"]}ranks r ON r.ranking = i.ranking WHERE userid = ? ORDER BY " . $sortby);
+$stmt = $smarty->dbh()->prepare("SELECT itemid, name, description, i.category as catid, c.category, price, price as pricenum, source, url, i.ranking as rankid, rendered, comment, quantity, image_filename, public FROM {$opt["table_prefix"]}items i LEFT OUTER JOIN {$opt["table_prefix"]}categories c ON c.categoryid = i.category LEFT OUTER JOIN {$opt["table_prefix"]}ranks r ON r.ranking = i.ranking WHERE userid = ? ORDER BY " . $sortby);
 $stmt->bindParam(1, $userid, PDO::PARAM_INT);
 $stmt->execute();
 $myitems_count = 0;
@@ -298,6 +298,7 @@ if (!$opt["auto_connect_family_members"]) {
 		}
 		$shoppees[] = $row;
 	}
+	$prospects = array();
 }
 
 $stmt = $smarty->dbh()->prepare("SELECT messageid, u.fullname, message, created " .

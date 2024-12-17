@@ -205,6 +205,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 																{/if}
 																<div class="row row-cols-2 mb-2 g-3 align-items-center">
 																	<div class="col-4">
+																		<label class="col-form-label" for="public">Make public</label>
+																	</div>
+																	<div class="col">
+																		<input id="public" name="public" type="checkbox" class="form-check-input" {if $row.public == 1}checked{/if}>
+																	</div> <!-- col -->
+																</div> <!-- row -->
+																<div class="row row-cols-2 mb-2 g-3 align-items-center">
+																	<div class="col-4">
 																		<label class="col-form-label" for="comment">Comment</label>
 																	</div>
 																	<div class="col">
@@ -228,6 +236,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 												<span title="{$row.description|escape:'htmlall'}">{$row.name|truncate:50|escape:'htmlall'}</span>
 											</a>
 											<span title="{$row.description|escape:'htmlall'}">
+											{if $row.public == 1} &nbsp; <img alt="Item is Public" class="theme-image" data-light-src="images/globe-light.png" data-dark-src="images/globe-dark.png" src="images/globe-light.png" border="0" title="Item is Public">{/if}
 										</td>
 										<td nowrap class="text-center">{$row.rankid}</td>
 										<td nowrap class="text-center">{$row.quantity}</td>
@@ -363,6 +372,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 												</div>
 											</div>
 										{/if}
+										<div class="row row-cols-2 mb-2 g-3 align-items-center">
+											<div class="col-4">
+												<label class="col-form-label" for="public">Make public</label>
+											</div>
+											<div class="col">
+												<input id="public" name="public" type="checkbox" class="form-check-input">
+											</div> <!-- col -->
+										</div> <!-- row -->
 										<div class="row row-cols-2 mb-2 g-3 align-items-center">
 											<div class="col-4">
 												<label class="col-form-label" for="comment">Comment</label>
