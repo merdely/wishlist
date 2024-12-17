@@ -142,13 +142,15 @@ if (!empty($_GET["action"])) {
 	}
 }
 
-$stmt = $smarty->dbh()->prepare("SELECT * FROM {$opt["table_prefix"]}shoppers WHERE shopper = ? AND mayshopfor = ? AND pending = 0");
-$stmt->bindParam(1, $userid, PDO::PARAM_INT);
-$stmt->bindParam(2, $shopfor, PDO::PARAM_INT);
-$stmt->execute();
-if (!($stmt->fetch())) {
-	echo "Nice try! (You can't shop for someone who hasn't approved it.)";
-	exit;
+if (!$opt["auto_connect_family_members"]) {
+	$stmt = $smarty->dbh()->prepare("SELECT * FROM {$opt["table_prefix"]}shoppers WHERE shopper = ? AND mayshopfor = ? AND pending = 0");
+	$stmt->bindParam(1, $userid, PDO::PARAM_INT);
+	$stmt->bindParam(2, $shopfor, PDO::PARAM_INT);
+	$stmt->execute();
+	if (!($stmt->fetch())) {
+		echo "Nice try! (You can't shop for someone who hasn't approved it.)";
+		exit;
+	}
 }
 
 if (!empty($_GET["sortdir"])) {
