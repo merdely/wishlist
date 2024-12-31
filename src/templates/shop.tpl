@@ -173,35 +173,38 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 															</div> <!-- col -->
 														</div> <!-- row -->
 													</div> <!-- modal-body -->
-													<div class="modal-footer">
-														{if $row.url != ''}<a role="button" class="btn btn-secondary" href="{$row.url|escape:'htmlall'}" target="_blank"><img alt="Visit URL" title="Visit URL" src="images/link-dark.png" border="0" /></a>{/if}
-														{if isset($row.image_filename)}<a role="button" class="btn btn-secondary" href="{$opt.image_subdir}/{$row.image_filename}" title="{$row.name|escape:'htmlall'}" data-lightbox="image-1"><img alt="View Image" title="View Image" src="images/image-dark.png" border="0" /></a>{/if}
-														{if $row.quantity > 1}
-															{if $row.avail > 0}<a role="button" class="btn btn-secondary" href="shop.php?action=reserve&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="{$reservetext|escape:'htmlall'}" title="{$reservetext|escape:'htmlall'}" src="images/locked-dark.png" border="0" /></a>{/if}
-															{if $row.avail > 0 || $row.ireserved > 0}<a role="button" class="btn btn-secondary" href="shop.php?action=purchase&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="{$purchasetext|escape:'htmlall'}" title="{$purchasetext|escape:'htmlall'}" src="images/credit-card-3-dark.png" border="0" /></a>{/if}
-															{if $row.ireserved > 0}<a role="button" class="btn btn-secondary" href="shop.php?action=release&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="Release Item" title="Release Item" src="images/unlocked-dark.png" border="0" /></a>{/if}
-															{if $row.ibought > 0}<a role="button" class="btn btn-secondary" href="shop.php?action=return&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="Return Item" title="Return Item" src="images/return-dark.png" border="0" /></a>{/if}
-														{else}
-															{if $row.rfullname == '' && $row.bfullname == ''}
-																<a role="button" class="btn btn-secondary" href="shop.php?action=reserve&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="Reserve Item" title="Reserve Item" src="images/locked-dark.png" border="0" /></a>
-																<a role="button" class="btn btn-secondary" href="shop.php?action=purchase&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="{$purchasetext|escape:'htmlall'}" title="{$purchasetext|escape:'htmlall'}" src="images/credit-card-3-dark.png" border="0" /></a>
-															{elseif $row.rfullname != ''}
-																{if $row.reservedid == $userid}
-																<a role="button" class="btn btn-secondary" href="shop.php?action=release&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="Release Item" title="Release Item" src="images/unlocked-dark.png" border="0" /></a>
-																<a role="button" class="btn btn-secondary" href="shop.php?action=purchase&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="{$purchasetext|escape:'htmlall'}" title="{$purchasetext|escape:'htmlall'}" src="images/credit-card-3-dark.png" border="0" /></a>
+													<div class="modal-footer d-flex justify-content-between">
+														<span>{if isset($row.created)}Added: {$row.created|date_format:"%F"}{/if}</span>
+														<div>
+															{if $row.url != ''}<a role="button" class="btn btn-secondary" href="{$row.url|escape:'htmlall'}" target="_blank"><img alt="Visit URL" title="Visit URL" src="images/link-dark.png" border="0" /></a>{/if}
+															{if isset($row.image_filename)}<a role="button" class="btn btn-secondary" href="{$opt.image_subdir}/{$row.image_filename}" title="{$row.name|escape:'htmlall'}" data-lightbox="image-1"><img alt="View Image" title="View Image" src="images/image-dark.png" border="0" /></a>{/if}
+															{if $row.quantity > 1}
+																{if $row.avail > 0}<a role="button" class="btn btn-secondary" href="shop.php?action=reserve&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="{$reservetext|escape:'htmlall'}" title="{$reservetext|escape:'htmlall'}" src="images/locked-dark.png" border="0" /></a>{/if}
+																{if $row.avail > 0 || $row.ireserved > 0}<a role="button" class="btn btn-secondary" href="shop.php?action=purchase&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="{$purchasetext|escape:'htmlall'}" title="{$purchasetext|escape:'htmlall'}" src="images/credit-card-3-dark.png" border="0" /></a>{/if}
+																{if $row.ireserved > 0}<a role="button" class="btn btn-secondary" href="shop.php?action=release&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="Release Item" title="Release Item" src="images/unlocked-dark.png" border="0" /></a>{/if}
+																{if $row.ibought > 0}<a role="button" class="btn btn-secondary" href="shop.php?action=return&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="Return Item" title="Return Item" src="images/return-dark.png" border="0" /></a>{/if}
+															{else}
+																{if $row.rfullname == '' && $row.bfullname == ''}
+																	<a role="button" class="btn btn-secondary" href="shop.php?action=reserve&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="Reserve Item" title="Reserve Item" src="images/locked-dark.png" border="0" /></a>
+																	<a role="button" class="btn btn-secondary" href="shop.php?action=purchase&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="{$purchasetext|escape:'htmlall'}" title="{$purchasetext|escape:'htmlall'}" src="images/credit-card-3-dark.png" border="0" /></a>
+																{elseif $row.rfullname != ''}
+																	{if $row.reservedid == $userid}
+																	<a role="button" class="btn btn-secondary" href="shop.php?action=release&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="Release Item" title="Release Item" src="images/unlocked-dark.png" border="0" /></a>
+																	<a role="button" class="btn btn-secondary" href="shop.php?action=purchase&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="{$purchasetext|escape:'htmlall'}" title="{$purchasetext|escape:'htmlall'}" src="images/credit-card-3-dark.png" border="0" /></a>
+																	{/if}
 																{/if}
 															{/if}
-														{/if}
-														{if !$public_view}
-															<a role="button" class="btn btn-secondary" href="shop.php?action=copy&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="I Want This Too" title="I Want This Too" src="images/split-2-dark.png" border="0" /></a>
-														{/if}
-														<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+															{if !$public_view}
+																<a role="button" class="btn btn-secondary" href="shop.php?action=copy&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="I Want This Too" title="I Want This Too" src="images/split-2-dark.png" border="0" /></a>
+															{/if}
+															<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+														</div>
 													</div> <!-- modal-footer -->
 												</div> <!-- modal-content -->
 											</div> <!-- modal-dialog -->
 										</div> <!-- modal -->
 										<a href="#" data-bs-toggle="modal" data-bs-target="#modal_{$row.itemid}">
-											<span title="{$row.description|escape:'htmlall'}">{$row.name|truncate:50|escape:'htmlall'}</span>
+											<span title="{$row.description|escape:'htmlall'}{if isset($row.created)} (Added: {$row.created|date_format:"%F"}){/if}">{$row.name|truncate:50|escape:'htmlall'}</span>
 										</a>
 									</td>
 									<td nowrap class="text-center">{$row.rankid}</td>
