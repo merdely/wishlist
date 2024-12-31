@@ -226,7 +226,7 @@ else {
 $sql = "SELECT i.itemid, name, description, price, price as pricenum, source, i.category as catid, c.category, url, r.title as rank, i.ranking as rankid, image_filename, public, " .
 		"ub.fullname AS bfullname, ub.userid AS boughtid, " .
 		"ur.fullname AS rfullname, ur.userid AS reservedid, " .
-		"rendered, i.comment, i.quantity " .
+		"rendered, i.comment, i.quantity, created " .
 	"FROM {$opt["table_prefix"]}items i " .
 	"LEFT OUTER JOIN {$opt["table_prefix"]}categories c ON c.categoryid = i.category " .
 	"LEFT OUTER JOIN {$opt["table_prefix"]}ranks r ON r.ranking = i.ranking " .

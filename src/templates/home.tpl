@@ -229,21 +229,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 																	</div> <!-- col -->
 																</div> <!-- row -->
 															</div> <!-- modal-body -->
-															<div class="modal-footer">
-																{if $row.url != ''}<a role="button" class="btn btn-secondary" href="{$row.url}" target="_blank" title="{$row.url}"><img alt="Visit URL" title="Visit URL" src="images/link-dark.png" border="0" /></a>{/if}
-																{if isset($row.image_filename)}<a role="button" class="btn btn-secondary" href="{$opt.image_subdir}/{$row.image_filename}" title="{$row.name|escape:'htmlall'}" data-lightbox="image-1"><img alt="View Image" title="View Image" src="images/image-dark.png" border="0" /></a>{/if}
-																<a role="button" class="btn btn-secondary" href="receive.php?itemid={$row.itemid}" ><img alt="Mark Item Received" src="images/return-dark.png" title="Mark Item Received" border="0" /></a>
-																<a role="button" class="btn btn-secondary" rel="confirmitemarchive" data-content="{$row.name|escape:'htmlall'}" href="item.php?action=archive&itemid={$row.itemid}"><img alt="Archive Item" title="Archive Item" src="images/archive-fill-dark.png" border="0" /></a>
-																<a role="button" class="btn btn-danger" rel="confirmitemdelete" data-content="{$row.name|escape:'htmlall'}" href="item.php?action=delete&itemid={$row.itemid}"><img alt="Delete Item" title="Delete Item" src="images/bin-dark.png" border="0" /></a>
-																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-																<button type="submit" class="btn btn-primary">Save</button>
+															<div class="modal-footer d-flex justify-content-between">
+																<span>{if isset($row.created)}Added: {$row.created|date_format:"%F"}{/if}</span>
+																<div>
+																	{if $row.url != ''}<a role="button" class="btn btn-secondary" href="{$row.url}" target="_blank" title="{$row.url}"><img alt="Visit URL" title="Visit URL" src="images/link-dark.png" border="0" /></a>{/if}
+																	{if isset($row.image_filename)}<a role="button" class="btn btn-secondary" href="{$opt.image_subdir}/{$row.image_filename}" title="{$row.name|escape:'htmlall'}" data-lightbox="image-1"><img alt="View Image" title="View Image" src="images/image-dark.png" border="0" /></a>{/if}
+																	<a role="button" class="btn btn-secondary" href="receive.php?itemid={$row.itemid}" ><img alt="Mark Item Received" src="images/return-dark.png" title="Mark Item Received" border="0" /></a>
+																	<a role="button" class="btn btn-secondary" rel="confirmitemarchive" data-content="{$row.name|escape:'htmlall'}" href="item.php?action=archive&itemid={$row.itemid}"><img alt="Archive Item" title="Archive Item" src="images/archive-fill-dark.png" border="0" /></a>
+																	<a role="button" class="btn btn-danger" rel="confirmitemdelete" data-content="{$row.name|escape:'htmlall'}" href="item.php?action=delete&itemid={$row.itemid}"><img alt="Delete Item" title="Delete Item" src="images/bin-dark.png" border="0" /></a>
+																	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+																	<button type="submit" class="btn btn-primary">Save</button>
+																</div>
 															</div> <!-- modal-footer -->
 														</div> <!-- modal-content -->
 													</div> <!-- modal-dialog -->
 												</div> <!-- modal -->
 											</form>
 											<a href="#" data-bs-toggle="modal" data-bs-target="#editmodal_{$row.itemid}">
-												<span title="{$row.description|escape:'htmlall'}">{$row.name|truncate:50|escape:'htmlall'}</span>
+												<span title="{$row.description|escape:'htmlall'}{if isset($row.created)} (Added: {$row.created|date_format:"%F"}){/if}">{$row.name|truncate:50|escape:'htmlall'}</span>
 											</a>
 											<span title="{$row.description|escape:'htmlall'}">
 											{if $row.public == 1} &nbsp; <img alt="Item is Public" class="theme-image" data-light-src="images/globe-light.png" data-dark-src="images/globe-dark.png" src="images/globe-light.png" border="0" title="Item is Public">{/if}

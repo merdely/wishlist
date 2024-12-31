@@ -304,8 +304,8 @@ if (!empty($_REQUEST["action"])) {
 	}
 	else if ($action == "insert") {
 		if (!$haserror) {
-			$stmt = $smarty->dbh()->prepare("INSERT INTO {$opt["table_prefix"]}items(userid,name,description,price,source,category,url,ranking,comment,public,quantity,image_filename) " .
-				"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			$stmt = $smarty->dbh()->prepare("INSERT INTO {$opt["table_prefix"]}items(userid,name,description,price,source,category,url,ranking,comment,public,quantity,created,image_filename) " .
+				"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			$stmt->bindParam(1, $userid, PDO::PARAM_INT);
 			$stmt->bindParam(2, $name, PDO::PARAM_STR);
 			$stmt->bindParam(3, $description, PDO::PARAM_STR);
@@ -317,10 +317,11 @@ if (!empty($_REQUEST["action"])) {
 			$stmt->bindParam(9, $comment, PDO::PARAM_STR);
 			$stmt->bindParam(10, $public, PDO::PARAM_BOOL);
 			$stmt->bindParam(11, $quantity, PDO::PARAM_INT);
+			$stmt->bindParam(12, date('Y-m-d H:i:s'));
 			if (!isset($image_base_filename) || $image_base_filename == "") {
 				$image_base_filename = NULL;
 			}
-			$stmt->bindParam(12, $image_base_filename, PDO::PARAM_STR);
+			$stmt->bindParam(13, $image_base_filename, PDO::PARAM_STR);
 			$stmt->execute();
 
 			stampUser($userid, $smarty->dbh(), $smarty->opt());

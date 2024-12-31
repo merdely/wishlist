@@ -80,6 +80,8 @@ CREATE TABLE `items` (
   `image_filename` varchar(255) default NULL,
   `public` tinyint(1) NOT NULL default '0',
   `archive` tinyint(1) NOT NULL default '0',
+  `archive` tinyint(1) NOT NULL default '0',
+  `created` datetime default NULL,
   PRIMARY KEY  (`itemid`)
 );
 
