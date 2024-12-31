@@ -54,11 +54,12 @@ if (!empty($_POST["action"])) {
 }
 
 try {
-	$stmt = $smarty->dbh()->prepare("SELECT show_helptext FROM {$opt["table_prefix"]}users WHERE userid = ?");
+	$stmt = $smarty->dbh()->prepare("SELECT email, show_helptext FROM {$opt["table_prefix"]}users WHERE userid = ?");
 	$stmt->bindParam(1, $userid, PDO::PARAM_INT);
 
 	$stmt->execute();
 	if ($row = $stmt->fetch()) {
+		$smarty->assign('email', $row["email"]);
 		$smarty->assign('show_helptext', $row["show_helptext"]);
 		$_SESSION['show_helptext'] = $row["show_helptext"];
 	}

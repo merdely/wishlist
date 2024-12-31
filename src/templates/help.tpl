@@ -77,6 +77,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 				</div> <!-- col -->
 				<div class="col">
 					<div class="card h-100">
+						<div class="card-header">What's New</div>
+						<div class="card-body">
+							<ul>
+								<li>2024-12-31: Items can be marked "Public" and shared with others via
+									<div class="input-group">
+										<input type="text" id="readonlyText" class="form-control" value="{$myurl}/shop.php?list={$email}" readonly>
+										<button class="btn btn-primary" id="copyButton">Copy</button>
+									</div>
+								</li>
+								<li>2024-12-31: Marking items as received archives them instead of deletes them</li>
+								<li>2024-12-31: Items can be archived and the Item Archive can be viewed under the profile icon (top-right)</li>
+								<li>2024-12-17: You are automatically a shopper for your family members</li>
+							</ul>
+						</div> <!-- card body -->
+					</div> <!-- card -->
+				</div> <!-- col -->
+				<div class="col">
+					<div class="card h-100">
 						<div class="card-header">Gift Registry Help</div>
 						<div class="card-body">
 							<ul>
@@ -141,5 +159,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 		</div> <!-- container -->
 	</main>
 	{include file='footer.tpl'}
+<script>
+	document.getElementById('copyButton').addEventListener('click', function() {
+		// Get the text from the input field
+		const textBox = document.getElementById('readonlyText');
+		textBox.select();
+		textBox.setSelectionRange(0, 99999); // For mobile devices
+
+		// Copy the text to the clipboard
+		navigator.clipboard.writeText(textBox.value)
+			.then(() => {
+				// Show success message
+				const alert = document.getElementById('copyAlert');
+				alert.classList.remove('d-none');
+				setTimeout(() => {
+					alert.classList.add('d-none');
+				}, 2000); // Hide the alert after 2 seconds
+			})
+			.catch(err => console.error('Failed to copy text:', err));
+	});
+</script>
 </body>
 </html>
