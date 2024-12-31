@@ -18,26 +18,47 @@ require_once(dirname(__FILE__) . "/includes/MySmarty.class.php");
 $smarty = new MySmarty();
 $opt = $smarty->opt();
 
-session_start();
-if (!isset($_SESSION["userid"])) {
-	header("Location: " . getFullPath("login.php") . "?from=shop.php");
-	exit;
-}
-else {
-	$userid = $_SESSION["userid"];
-}
+$public_view = 0;
+if (isset($_GET["list"])) {
+	$list = filter_var(strtolower(trim($_GET["list"])), FILTER_SANITIZE_EMAIL);;
+	$list = htmlspecialchars($list, ENT_QUOTES, 'UTF-8');
 
-$opt['show_helptext'] = $_SESSION['show_helptext'];
-
-if (isset($_GET["shopfor"])) {
-	$shopfor = filter_var(trim($_GET["shopfor"]), FILTER_SANITIZE_NUMBER_INT);
-
-	if (filter_var($shopfor, FILTER_SANITIZE_NUMBER_INT) === false || $shopfor == "" || !is_numeric($shopfor) || $shopfor < 0) {
-		die("Invalid shopfor ({$_GET["shopfor"]})");
+	if (filter_var($list, FILTER_SANITIZE_EMAIL) === false || $list == "") {
+		die("Invalid listid ({$_GET["list"]})");
 	}
-	$shopfor = (int) $shopfor;
-//} else {
-//	header("Location: " . getFullPath("index.php"));
+	$stmt = $smarty->dbh()->prepare("SELECT userid FROM {$opt["table_prefix"]}users WHERE email = ?");
+	$stmt->bindParam(1, $list, PDO::PARAM_STR);
+	$stmt->execute();
+	if ($row = $stmt->fetch()) {
+		$shopfor = (int) $row["userid"];
+		$public_view = 1;
+	} else {
+		die("Invalid listid ({$_GET["list"]})");
+	}
+}
+
+if ($public_view == 0) {
+	session_start();
+	if (!isset($_SESSION["userid"])) {
+		header("Location: " . getFullPath("login.php") . "?from=shop.php");
+		exit;
+	}
+	else {
+		$userid = $_SESSION["userid"];
+	}
+	
+	$opt['show_helptext'] = $_SESSION['show_helptext'];
+	
+	if (isset($_GET["shopfor"])) {
+		$shopfor = filter_var(trim($_GET["shopfor"]), FILTER_SANITIZE_NUMBER_INT);
+	
+		if (filter_var($shopfor, FILTER_SANITIZE_NUMBER_INT) === false || $shopfor == "" || !is_numeric($shopfor) || $shopfor < 0) {
+			die("Invalid shopfor ({$_GET["shopfor"]})");
+		}
+		$shopfor = (int) $shopfor;
+	//} else {
+	//	header("Location: " . getFullPath("index.php"));
+	}
 }
 
 if ($shopfor == $userid) {
@@ -143,13 +164,15 @@ if (!empty($_GET["action"])) {
 }
 
 if (!$opt["auto_connect_family_members"]) {
-	$stmt = $smarty->dbh()->prepare("SELECT * FROM {$opt["table_prefix"]}shoppers WHERE shopper = ? AND mayshopfor = ? AND pending = 0");
-	$stmt->bindParam(1, $userid, PDO::PARAM_INT);
-	$stmt->bindParam(2, $shopfor, PDO::PARAM_INT);
-	$stmt->execute();
-	if (!($stmt->fetch())) {
-		echo "Nice try! (You can't shop for someone who hasn't approved it.)";
-		exit;
+	if ($public_view == 0) {
+		$stmt = $smarty->dbh()->prepare("SELECT * FROM {$opt["table_prefix"]}shoppers WHERE shopper = ? AND mayshopfor = ? AND pending = 0");
+		$stmt->bindParam(1, $userid, PDO::PARAM_INT);
+		$stmt->bindParam(2, $shopfor, PDO::PARAM_INT);
+		$stmt->execute();
+		if (!($stmt->fetch())) {
+			echo "Nice try! (You can't shop for someone who hasn't approved it.)";
+			exit;
+		}
 	}
 }
 
@@ -200,7 +223,7 @@ else {
 	for those items with a quantity of 1.  if the item's quantity > 1 we'll query alloc when we
 	get to that record.  the theory is that most items will have quantity = 1 so we'll make the least
 	number of trips. */
-$stmt = $smarty->dbh()->prepare("SELECT i.itemid, name, description, price, price as pricenum, source, i.category as catid, c.category, url, r.title as rank, i.ranking as rankid, image_filename, " .
+$sql = "SELECT i.itemid, name, description, price, price as pricenum, source, i.category as catid, c.category, url, r.title as rank, i.ranking as rankid, image_filename, public, " .
 		"ub.fullname AS bfullname, ub.userid AS boughtid, " .
 		"ur.fullname AS rfullname, ur.userid AS reservedid, " .
 		"rendered, i.comment, i.quantity " .
@@ -210,8 +233,13 @@ $stmt = $smarty->dbh()->prepare("SELECT i.itemid, name, description, price, pric
 	"LEFT OUTER JOIN {$opt["table_prefix"]}allocs a ON a.itemid = i.itemid AND i.quantity = 1 " .	// only join allocs for single-quantity items.
 	"LEFT OUTER JOIN {$opt["table_prefix"]}users ub ON ub.userid = a.userid AND a.bought = 1 " .
 	"LEFT OUTER JOIN {$opt["table_prefix"]}users ur ON ur.userid = a.userid AND a.bought = 0 " .
-	"WHERE i.userid = ? " .
-	"ORDER BY " . $sortby);
+	"WHERE i.userid = ? AND i.archive = false ";
+if ($public_view) {
+	$sql .= "AND public = 1 ";
+}
+$sql .= "ORDER BY " . $sortby;
+error_log("sql = '$sql'");
+$stmt = $smarty->dbh()->prepare($sql);
 $stmt->bindParam(1, $shopfor, PDO::PARAM_INT);
 $stmt->execute();
 $shoprows = array();
@@ -240,7 +268,7 @@ while ($row = $stmt->fetch()) {
 					$itemallocs[] = ($allocrow['quantity'] . " bought by you.");
 				}
 				else {
-					if (!$opt["anonymous_purchasing"]) {
+					if (!$opt["anonymous_purchasing"] && !$public_view) {
 						$itemallocs[] = ($allocrow['quantity'] . " bought by " . $allocrow['bfullname'] . ".");
 					}
 					else {
@@ -254,11 +282,11 @@ while ($row = $stmt->fetch()) {
 					$itemallocs[] = ($allocrow['quantity'] . " reserved by you.");
 				}
 				else {
-					if (!$opt["anonymous_purchasing"]) {
+					if (!$opt["anonymous_purchasing"] && !$public_view) {
 						$itemallocs[] = ($allocrow['quantity'] . " reserved by " . $allocrow['rfullname'] . ".");
 					}
 					else {
-						$itemallocs[] = ($allocrow['quanitity'] . " reserved.");
+						$itemallocs[] = ($allocrow['quantity'] . " reserved.");
 					}
 				}
 			}
@@ -294,6 +322,7 @@ $smarty->assign('ucomment', $ucomment);
 $smarty->assign('shopfor', $shopfor);
 $smarty->assign('shoprows', $shoprows);
 $smarty->assign('userid', $userid);
+$smarty->assign('public_view', $public_view);
 if (isset($_GET["message"])) {
 	$message = $_GET["message"];
 }

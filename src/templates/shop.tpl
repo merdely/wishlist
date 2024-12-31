@@ -35,7 +35,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	</script>
 </head>
 <body>
-	{include file='navbar.tpl' isadmin=$isadmin}
+	{if !$public_view}
+		{include file='navbar.tpl' isadmin=$isadmin}
+	{else}
+		{include file='public_navbar.tpl'}
+	{/if}
 	<main>
 		<div class="container">
 			{if isset($message)}
@@ -52,7 +56,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 							<li>If you return something you've purchased, come back and click the <img src="images/return-light.png"> icon.  It will remain reserved for you.</li>
 							<li>Just because an item has a URL listed doesn't mean you have to buy it from there (unless the comment says so).</li>
 							<li>You can click the column headers to sort by that attribute.</li>
-							<li>If you see something you'd like for yourself, click the <img src="images/split-2-light.png"> icon to copy it to your own list.</li>
+							{if !$public_view}
+								<li>If you see something you'd like for yourself, click the <img src="images/split-2-light.png"> icon to copy it to your own list.</li>
+							{/if}
 						</ul>
 					</div> <!-- card body -->
 				</div> <!-- card -->
@@ -186,7 +192,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 																{/if}
 															{/if}
 														{/if}
-														<a role="button" class="btn btn-secondary" href="shop.php?action=copy&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="I Want This Too" title="I Want This Too" src="images/split-2-dark.png" border="0" /></a>
+														{if !$public_view}
+															<a role="button" class="btn btn-secondary" href="shop.php?action=copy&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="I Want This Too" title="I Want This Too" src="images/split-2-dark.png" border="0" /></a>
+														{/if}
 														<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 													</div> <!-- modal-footer -->
 												</div> <!-- modal-content -->
@@ -249,7 +257,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 												{* </td> *}
 											{else}
 												<td> <!-- status -->
-													{if $opt.anonymous_purchasing}
+													{if $opt.anonymous_purchasing || $public_view}
 														<i>Reserved.</i>
 													{else}
 														<i>Reserved by {$row.rfullname|escape:'htmlall'}.</i>
@@ -286,7 +294,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 										{/if}
 									{/if}
 									{* <td> *}
-										<a href="shop.php?action=copy&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="I Want This Too" title="I Want This Too" class="theme-image" data-light-src="images/split-2-light.png" data-dark-src="images/split-2-dark.png" src="images/split-2-light.png" border="0" /></a>
+										{if !$public_view}
+											<a href="shop.php?action=copy&itemid={$row.itemid}&shopfor={$shopfor}"><img alt="I Want This Too" title="I Want This Too" class="theme-image" data-light-src="images/split-2-light.png" data-dark-src="images/split-2-dark.png" src="images/split-2-light.png" border="0" /></a>
+										{/if}
 									</td>
 								</tr>
 							{/foreach}
@@ -296,25 +306,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 				</div> <!-- card body -->
 				<div class="card-footer text-body-secondary"><a onClick="printPage()" href="#">Send to printer</a></div>
 			</div> <!-- card -->
-			<div class="row row-cols-1 row-cols-md-2 g4 d-flex d-flex justify-content-center">
-				<div class="col mb-3">
-					<div class="card mb-3">
-						<div class="card-header"><h1>{$ufullname|escape:'htmlall'} Info</h1></div>
-						<div class="card-body">
-							{if $uemail != ''}
-								Email Address: {$uemail|escape:'htmlall'}<br /><br />
-							{/if}
-							{if $ucomment != ''}
-								{$ucomment|escape:'htmlall'|nl2br}
-							{/if}
-						</div> <!-- col -->
-					</div> <!-- row -->
-				</div> <!-- col -->
-			</div> <!-- row -->
+			{if !$public_view}
+				<div class="row row-cols-1 row-cols-md-2 g4 d-flex d-flex justify-content-center">
+					<div class="col mb-3">
+						<div class="card mb-3">
+							<div class="card-header"><h1>{$ufullname|escape:'htmlall'} Info</h1></div>
+							<div class="card-body">
+								{if $uemail != ''}
+									Email Address: {$uemail|escape:'htmlall'}<br /><br />
+								{/if}
+								{if $ucomment != ''}
+									{$ucomment|escape:'htmlall'|nl2br}
+								{/if}
+							</div> <!-- col -->
+						</div> <!-- row -->
+					</div> <!-- col -->
+				</div> <!-- row -->
+			{/if}
 			<div class="card text-bg-info mb-3">
 				<div class="card-header">Legend</div>
 				<div class="card-body text-center">
-					<img src="images/locked-light.png" alt="Reserve" title="Reserve"> = Reserve, <img src="images/unlocked-light.png" alt="Release" title="Release"> = Release, <img src="images/credit-card-3-light.png" alt="Purchase" title="Purchase"> = Purchase, <img src="images/return-light.png" alt="Return" title="Return"> = Return, <img src="images/split-2-light.png" alt="I Want This Too" title="I Want This Too"> = I Want This Too
+					<img src="images/locked-light.png" alt="Reserve" title="Reserve"> = Reserve, <img src="images/unlocked-light.png" alt="Release" title="Release"> = Release, <img src="images/credit-card-3-light.png" alt="Purchase" title="Purchase"> = Purchase, <img src="images/return-light.png" alt="Return" title="Return"> = Return{if !$public_view}, <img src="images/split-2-light.png" alt="I Want This Too" title="I Want This Too"> = I Want This Too{/if}
 				</div> <!-- card body -->
 			</div> <!-- card -->
 		</div>

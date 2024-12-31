@@ -93,6 +93,13 @@ function getGlobalOptions() {
 		*/
 		"show_helptext" => 1,
 
+		/* Whether or not clicking the Archive Item link requires a JavaScript-based
+			confirmation.
+			0 = don't show confirmation,
+			1 = show confirmation
+		*/
+		"confirm_item_archives" => 1,
+
 		/* Whether or not clicking the Delete Item link requires a JavaScript-based
 			confirmation.
 			0 = don't show confirmation,
