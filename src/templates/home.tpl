@@ -30,6 +30,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	<script src="js/bs-components.js"></script>
 	<script language="JavaScript" type="text/javascript">
 		$(document).ready(function() {
+			{if $opt.confirm_item_archives}
+				$('a[rel=confirmitemarchive]').click(function(event) {
+					var desc = $(this).attr('data-content');
+					if (!window.confirm('Are you sure you want to archive "' + desc + '"?')) {
+						event.preventDefault();
+					}
+				});
+			{/if}
 			{if $opt.confirm_item_deletes}
 				$('a[rel=confirmitemdelete]').click(function(event) {
 					var desc = $(this).attr('data-content');
@@ -68,6 +76,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 						<li>List each item seperately on your list - do not combine items. (i.e. list each book of a 4-part series separately.)</li>
 						<li>Once you've bought or decided not to buy an item, remember to return to the recipient's gift lists and mark it accordingly.</li>
 						<li>If someone purchases an item on your list, click <img src="images/return-light.png" /> to mark it as received.</li>
+						<li>To archive an item on your list, click <img src="images/archive-fill-light.png" />.</li>
 					</ul>
 					</div> <!-- card body -->
 				</div> <!-- card -->
@@ -224,6 +233,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 																{if $row.url != ''}<a role="button" class="btn btn-secondary" href="{$row.url}" target="_blank" title="{$row.url}"><img alt="Visit URL" title="Visit URL" src="images/link-dark.png" border="0" /></a>{/if}
 																{if isset($row.image_filename)}<a role="button" class="btn btn-secondary" href="{$opt.image_subdir}/{$row.image_filename}" title="{$row.name|escape:'htmlall'}" data-lightbox="image-1"><img alt="View Image" title="View Image" src="images/image-dark.png" border="0" /></a>{/if}
 																<a role="button" class="btn btn-secondary" href="receive.php?itemid={$row.itemid}" ><img alt="Mark Item Received" src="images/return-dark.png" title="Mark Item Received" border="0" /></a>
+																<a role="button" class="btn btn-secondary" rel="confirmitemarchive" data-content="{$row.name|escape:'htmlall'}" href="item.php?action=archive&itemid={$row.itemid}"><img alt="Archive Item" title="Archive Item" src="images/archive-fill-dark.png" border="0" /></a>
 																<a role="button" class="btn btn-danger" rel="confirmitemdelete" data-content="{$row.name|escape:'htmlall'}" href="item.php?action=delete&itemid={$row.itemid}"><img alt="Delete Item" title="Delete Item" src="images/bin-dark.png" border="0" /></a>
 																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 																<button type="submit" class="btn btn-primary">Save</button>
@@ -252,6 +262,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 											{/if}
 											<a href="receive.php?itemid={$row.itemid}" class="text-decoration-none"><img alt="Mark Item Received" class="theme-image" data-light-src="images/return-light.png" data-dark-src="images/return-dark.png" src="images/return-light.png" border="0" title="Mark Item Received" /></a>&nbsp;
 											<a href="#" data-bs-toggle="modal" data-bs-target="#editmodal_{$row.itemid}"><img alt="Edit Item" class="theme-image" data-light-src="images/pencil-light.png" data-dark-src="images/pencil-dark.png" src="images/pencil-light.png" border="0" title="Edit Item" /></a>&nbsp;
+											<a rel="confirmitemarchive" data-content="{$row.name|escape:'htmlall'}" href="item.php?action=archive&itemid={$row.itemid}" class="text-decoration-none"><img alt="Archive Item" class="theme-image" data-light-src="images/archive-fill-light.png" data-dark-src="images/archive-fill-dark.png" src="images/archive-fill-light.png" border="0" alt="Archive" title="Archive Item" /></a>
 											<a rel="confirmitemdelete" data-content="{$row.name|escape:'htmlall'}" href="item.php?action=delete&itemid={$row.itemid}" class="text-decoration-none"><img alt="Delete Item" class="theme-image" data-light-src="images/bin-light.png" data-dark-src="images/bin-dark.png" src="images/bin-light.png" border="0" alt="Delete" title="Delete Item" /></a>
 										</td>
 									</tr>

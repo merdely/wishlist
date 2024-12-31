@@ -163,14 +163,16 @@ if (!empty($_GET["action"])) {
 	}
 }
 
-if ($public_view == 0) {
-	$stmt = $smarty->dbh()->prepare("SELECT * FROM {$opt["table_prefix"]}shoppers WHERE shopper = ? AND mayshopfor = ? AND pending = 0");
-	$stmt->bindParam(1, $userid, PDO::PARAM_INT);
-	$stmt->bindParam(2, $shopfor, PDO::PARAM_INT);
-	$stmt->execute();
-	if (!($stmt->fetch())) {
-		echo "Nice try! (You can't shop for someone who hasn't approved it.)";
-		exit;
+if (!$opt["auto_connect_family_members"]) {
+	if ($public_view == 0) {
+		$stmt = $smarty->dbh()->prepare("SELECT * FROM {$opt["table_prefix"]}shoppers WHERE shopper = ? AND mayshopfor = ? AND pending = 0");
+		$stmt->bindParam(1, $userid, PDO::PARAM_INT);
+		$stmt->bindParam(2, $shopfor, PDO::PARAM_INT);
+		$stmt->execute();
+		if (!($stmt->fetch())) {
+			echo "Nice try! (You can't shop for someone who hasn't approved it.)";
+			exit;
+		}
 	}
 }
 
@@ -231,7 +233,7 @@ $sql = "SELECT i.itemid, name, description, price, price as pricenum, source, i.
 	"LEFT OUTER JOIN {$opt["table_prefix"]}allocs a ON a.itemid = i.itemid AND i.quantity = 1 " .	// only join allocs for single-quantity items.
 	"LEFT OUTER JOIN {$opt["table_prefix"]}users ub ON ub.userid = a.userid AND a.bought = 1 " .
 	"LEFT OUTER JOIN {$opt["table_prefix"]}users ur ON ur.userid = a.userid AND a.bought = 0 " .
-	"WHERE i.userid = ? ";
+	"WHERE i.userid = ? AND i.archive = false ";
 if ($public_view) {
 	$sql .= "AND public = 1 ";
 }

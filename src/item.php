@@ -202,6 +202,34 @@ if (!empty($_REQUEST["action"])) {
 		}
 	}
 
+	if ($action == "archive") {
+		try {
+			$stmt = $smarty->dbh()->prepare("UPDATE {$opt["table_prefix"]}items SET archive=true WHERE itemid = ?");
+			$stmt->bindValue(1, (int) $_REQUEST["itemid"], PDO::PARAM_INT);
+			$stmt->execute();
+
+			header("Location: " . getFullPath("index.php?message=Item+archived."));
+			exit;
+		}
+		catch (PDOException $e) {
+			die("sql exception: " . $e->getMessage());
+		}
+	}
+
+	if ($action == "unarchive") {
+		try {
+			$stmt = $smarty->dbh()->prepare("UPDATE {$opt["table_prefix"]}items SET archive=false WHERE itemid = ?");
+			$stmt->bindValue(1, (int) $_REQUEST["itemid"], PDO::PARAM_INT);
+			$stmt->execute();
+
+			header("Location: " . getFullPath("archive.php?message=Item+unarchived."));
+			exit;
+		}
+		catch (PDOException $e) {
+			die("sql exception: " . $e->getMessage());
+		}
+	}
+
 	if ($action == "delete") {
 		try {
 			/* find out if this item is bought or reserved. */

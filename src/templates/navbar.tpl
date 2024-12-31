@@ -111,6 +111,7 @@ Inspired from https://getbootstrap.com/docs/4.0/components/navbar/#supported-con
 					</button>
 					<div class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-settings">
 						<a class="dropdown-item" href="profile.php">Update Profile</a>
+						<a class="dropdown-item" href="archive.php">Item Archive</a>
 						<a class="dropdown-item" href="login.php?action=logout">Logout</a>
 					</div>
 				</li>
