@@ -79,6 +79,7 @@ CREATE TABLE `items` (
   `quantity` int(11) NOT NULL default '0',
   `image_filename` varchar(255) default NULL,
   `public` tinyint(1) NOT NULL default '0',
+  `archive` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`itemid`)
 );
 
