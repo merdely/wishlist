@@ -73,13 +73,16 @@ try {
 	if ($quantity == 1) {
 		/* just delete the alloc and the item and get out.
 			yes, it's possible the item was RESERVED, not PURCHASED. */
-		deleteImageForItem($itemid, $smarty->dbh(), $smarty->opt());
+		// don't delete images for archived items
+		// deleteImageForItem($itemid, $smarty->dbh(), $smarty->opt());
 
+		/*
 		$stmt = $smarty->dbh()->prepare("DELETE FROM {$opt["table_prefix"]}allocs WHERE itemid = ?");
 		$stmt->bindParam(1, $itemid, PDO::PARAM_INT);
 		$stmt->execute();
+         */
 
-		$stmt = $smarty->dbh()->prepare("DELETE FROM {$opt["table_prefix"]}items WHERE itemid = ?");
+		$stmt = $smarty->dbh()->prepare("UPDATE {$opt["table_prefix"]}items SET archive=true WHERE itemid = ?");
 		$stmt->bindParam(1, $itemid, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -97,8 +100,9 @@ try {
 
 		if ($actual == $quantity) {
 			// now they're all gone.
-			deleteImageForItem($itemid, $smarty->dbh(), $smarty->opt());
-			$stmt = $smarty->dbh()->prepare("DELETE FROM {$opt["table_prefix"]}items WHERE itemid = ?");
+			// don't delete images for archived items
+			// deleteImageForItem($itemid, $smarty->dbh(), $smarty->opt());
+			$stmt = $smarty->dbh()->prepare("UPDATE {$opt["table_prefix"]}items SET archive=true WHERE itemid = ?");
 			$stmt->bindParam(1, $itemid, PDO::PARAM_INT);
 			$stmt->execute();
 		}
