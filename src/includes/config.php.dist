@@ -139,7 +139,42 @@ function getGlobalOptions() {
 		/* The number of minutes in between subscription notifications so the subscribers
 			don't get flooded with updates.
 		*/
-		"notify_threshold_minutes" => 60
+		"notify_threshold_minutes" => 60,
+
+		/* Reverse-proxy single sign-on (Caddy forward_auth + Authelia/Authentik).
+			When enabled and the proxy sends the user header, the user whose
+			users.username matches it is logged in automatically. Without the
+			header, the normal username/password login is used.
+			0 = off, 1 = on
+		*/
+		"proxy_auth_enabled" => 0,
+
+		/* Header names. Authelia: Remote-User / Remote-Name.
+			Authentik: X-authentik-username / X-authentik-name. */
+		"proxy_auth_user_header" => "Remote-User",
+		"proxy_auth_name_header" => "Remote-Name",
+
+		/* The user header is only trusted if the request can be proven to come
+			from the proxy. Configure at least one of these (the secret is
+			recommended); with neither set, proxy login stays off.
+			- proxy_auth_secret: Caddy must send this value in
+			  proxy_auth_secret_header on every request.
+			- proxy_auth_trusted_proxies: comma-separated IPs/CIDRs that
+			  REMOTE_ADDR must be in (e.g. "172.18.0.0/16"). Only useful if PHP
+			  sees the proxy's address, i.e. Caddy reverse_proxies to a separate
+			  web server rather than talking to php-fpm itself. */
+		"proxy_auth_secret_header" => "X-Proxy-Auth-Secret",
+		"proxy_auth_secret" => "",
+		"proxy_auth_trusted_proxies" => "",
+
+		/* 1 = overwrite users.fullname with the proxy's name header at login. */
+		"proxy_auth_sync_fullname" => 0,
+
+		/* Where "Logout" goes for proxy-authenticated users, so they're signed
+			out of the identity provider too (otherwise they'd just be logged
+			straight back in). e.g. "https://auth.example.com/logout".
+			Leave empty to only end the wishlist session. */
+		"proxy_auth_logout_url" => ""
 	);
 }
 ?>

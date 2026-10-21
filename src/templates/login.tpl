@@ -44,6 +44,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 								{if isset($username)}
 									<div class="alert alert-danger">Bad login.</div>
 								{/if}
+								{if isset($proxy_user_unknown)}
+									<div class="alert alert-warning">You're signed in as <strong>{$proxy_user_unknown|escape}</strong>, but there's no approved wishlist account with that username. Log in with your wishlist username and password below.</div>
+								{/if}
 								<div class="row align-items-center mb-3">
 									<div class="col-4">
 										<label class="col-form-label" for="username">Username</label>

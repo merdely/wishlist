@@ -4,12 +4,16 @@ define('SMARTY_VER', "5.8.5");
 define('SMARTY_DIR', dirname(__FILE__) . "/smarty-" . SMARTY_VER . "/libs/");
 require_once(SMARTY_DIR . "Smarty.class.php");
 require_once(dirname(__FILE__) . "/config.php");
+require_once(dirname(__FILE__) . "/proxyAuth.php");
 
 class MySmarty extends Smarty\Smarty {
 	public function __construct() {
 		parent::__construct();
 
 		date_default_timezone_set("UTC");
+
+        // Log in from a forward-auth header (Remote-User) if one is present and trusted.
+        proxyAuthLogin($this);
 	}
 
 	public function dbh() {

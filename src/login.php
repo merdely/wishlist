@@ -23,9 +23,30 @@ $pages = [ "admin.php", "categories.php", "event.php", "families.php", "forgot.p
 if (isset($_GET["action"])) {
 	if ($_GET["action"] == "logout") {
 		session_start();
+		$was_proxy_login = isset($_SESSION["proxy_user"]) || proxyAuthUsername($opt) !== null;
 		session_destroy();
+		// A proxy (forward-auth) user would just be logged straight back in by the
+		// header, so send them to the identity provider's logout as well.
+		if ($was_proxy_login && !empty($opt["proxy_auth_logout_url"])) {
+			header("Location: " . $opt["proxy_auth_logout_url"]);
+			exit;
+		}
 		$smarty->assign('reset_theme', 'true');
 	}
+}
+else {
+	session_start();
+	// Already signed in via the proxy header: no need to show the form.
+	if (isset($_SESSION["userid"]) && isset($_SESSION["proxy_user"]) && empty($_POST["username"])) {
+		header("Location: " . getFullPath("index.php"));
+		exit;
+	}
+	// The proxy vouched for a user with no approved account here.
+	if (isset($_SESSION["proxy_user_unknown"])) {
+		$smarty->assign('proxy_user_unknown', $_SESSION["proxy_user_unknown"]);
+		unset($_SESSION["proxy_user_unknown"]);
+	}
+	session_write_close();
 }
 
 if (isset($_GET["from"])) {
