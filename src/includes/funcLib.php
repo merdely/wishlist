@@ -158,7 +158,7 @@ function generatePassword($opt) {
 	//* (c) Hitech Scripts 2003
 	//* For more information, visit http://www.hitech-scripts.com
 	//* modified for phpgiftreg by Chris Clonch
-	mt_srand((double) microtime() * 1000000);
+	mt_srand((float) microtime() * 1000000);
 	$newstring = "";
 	if ($opt["password_length"] > 0) {
 		while(strlen($newstring) < $opt["password_length"]) {

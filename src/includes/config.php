@@ -16,7 +16,7 @@
 function getGlobalOptions() {
 	// Read information
 	$conf_file = '/var/www/conf/phpgiftreg.conf';
-	$mysql_conn_string = "mysql:host=localhost;dbname=giftreg";
+	$mysql_conn_string = "mysql:host=mariadb;dbname=giftreg";
 	$mysql_username = "giftreg";
 	$mysql_password = "cn3Malk";
 	if (file_exists($conf_file)) {
