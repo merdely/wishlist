@@ -33,7 +33,7 @@ function getGlobalOptions() {
 	}
 	// Proxy (forward-auth) settings can also come from the conf file, e.g.
 	//   proxy_auth_enabled = 1
-	//   proxy_auth_secret = "8T0owdMKbZ6Twt8Y0B6pRQg5ep0Z0EEyfQIe5IbYPL9oLqaYv0lew3UrF1bnWXat"
+	//   proxy_auth_secret = "YOUR_SECRET_HERE"
 	$proxy = array(
 		"proxy_auth_enabled" => 0,
 		"proxy_auth_user_header" => "Remote-User",
