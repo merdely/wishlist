@@ -160,7 +160,7 @@ else if ($action == "insert") {
 	if (!$haserror) {
 		// generate a password and insert the row.
 		$pwd = generatePassword($opt);
-		$stmt = $smarty->dbh()->prepare("INSERT INTO {$opt["table_prefix"]}users(username,password,fullname,email,email_msgs,show_helptext,approved,admin) VALUES(?, {$opt["password_hasher"]}(?), ?, ?, ?, ?, ?)");
+		$stmt = $smarty->dbh()->prepare("INSERT INTO {$opt["table_prefix"]}users(username,password,fullname,email,email_msgs,show_helptext,approved,admin) VALUES(?, {$opt["password_hasher"]}(?), ?, ?, ?, ?, ?, ?)");
 		$stmt->bindParam(1, $username, PDO::PARAM_STR);
 		$stmt->bindParam(2, $pwd, PDO::PARAM_STR);
 		$stmt->bindParam(3, $fullname, PDO::PARAM_STR);
